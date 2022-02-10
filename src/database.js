@@ -1,8 +1,5 @@
 import './setup.js';
 import { MongoClient } from 'mongodb';
-import dotenv from "dotenv"
-
-dotenv.config();
 
 const mongoClient = new MongoClient(process.env.MONGO_URI);
 
@@ -13,11 +10,8 @@ async function connection({ column }) {
     return db;
 }
 
-async function closeConnection() {
-    await mongoClient.close();
-}
 
 export {
     connection,
-    closeConnection,
 };
+
