@@ -10,11 +10,7 @@ async function connection({ column }) {
     return db;
 }
 
-async function closeConnection() {
-    await mongoClient.close();
-}
 
 export {
     connection,
-    closeConnection,
 };
