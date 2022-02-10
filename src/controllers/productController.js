@@ -1,13 +1,19 @@
 import { ObjectId } from 'mongodb';
 import { connection } from '../database.js';
 
+async function findProductById({ id }) {
+    const db = await connection({ column: 'products' });
+
+    const product = await db.findOne({ _id: new ObjectId(id) });
+
+    return product;
+}
+
 async function getProductById(req, res) {
     const { id } = req.params;
 
     try {
-        const db = await connection({ column: 'products' });
-
-        const product = await db.findOne({ _id: new ObjectId(id) });
+        const product = await findProductById({ id });
 
         if (!product) {
             return res.sendStatus(404);
@@ -21,4 +27,5 @@ async function getProductById(req, res) {
 
 export {
     getProductById,
+    findProductById,
 };
