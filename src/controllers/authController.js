@@ -1,6 +1,6 @@
-import { connection } from "../database.js";
-import { v4 as uuid } from "uuid";
-import bcrypt from "bcrypt";
+import { v4 as uuid } from 'uuid';
+import bcrypt from 'bcrypt';
+import { connection } from '../database.js';
 
 export async function signUp(req, res) {
     const user = req.body;
@@ -37,14 +37,16 @@ export async function logIn(req, res) {
         }
 
         if (!bcrypt.compareSync(password, user.password)) {
-            return res.sendStatus(401);
+            res.sendStatus(401);
+            return;
         }
 
         db = await connection({ column: 'sessions' });
         const token = uuid();
         await db.insertOne({ token, idUser: user._id });
-        return res.sendStatus(200);
-    }catch (error) {
+
+        res.sendStatus(200);
+    } catch (error) {
         res.sendStatus(500);
     }
 }
