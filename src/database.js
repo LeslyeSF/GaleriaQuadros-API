@@ -10,8 +10,6 @@ async function connection({ column }) {
     return db;
 }
 
-
 export {
     connection,
 };
-

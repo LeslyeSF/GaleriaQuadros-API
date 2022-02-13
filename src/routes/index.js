@@ -12,4 +12,3 @@ router.use(shopcartRouter);
 router.use(dataRouter);
 
 export default router;
-

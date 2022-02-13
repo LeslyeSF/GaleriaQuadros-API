@@ -1,4 +1,4 @@
-import joi from "joi";
+import joi from 'joi';
 
 const logInSchema = joi.object({
     email: joi.string().required(),
