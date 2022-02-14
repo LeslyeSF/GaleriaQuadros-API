@@ -62,6 +62,7 @@ export async function logIn(req, res) {
         res.status(200).send({ token, user });
     } catch (error) {
         res.sendStatus(500);
+        console.log(error);
     }
 }
 
