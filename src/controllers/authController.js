@@ -1,27 +1,38 @@
-import { v4 as uuid } from 'uuid';
+// import { v4 as uuid } from 'uuid';
 import bcrypt from 'bcrypt';
+import { ObjectId } from 'mongodb';
+import jwt from 'jsonwebtoken';
 import { connection } from '../database.js';
 
 export async function signUp(req, res) {
     const user = req.body;
 
-    const db = await connection({ column: 'users' });
-    const sameEmail = await db.findOne({ email: user.email });
-
-    if (sameEmail) {
-        res.sendStatus(409);
-        return;
-    }
-
-    const hashPassword = bcrypt.hashSync(user.password, 10);
-
     try {
+        const db = await connection({ column: 'users' });
+        const sameEmail = await db.findOne({ email: user.email });
+
+        if (sameEmail) {
+            res.sendStatus(409);
+            return;
+        }
+
+        const hashPassword = bcrypt.hashSync(user.password, 10);
+
         await db.insertOne({ ...user, password: hashPassword });
 
         res.sendStatus(201);
     } catch (error) {
         res.sendStatus(500);
     }
+}
+
+function generateToken({ userId }) {
+    const idUser = userId;
+    const key = process.env.JWT_SECRET;
+    const config = { expiresIn: 60 * 60 * 24 * 2 }; // 2 dias em segundos
+
+    const token = jwt.sign({ idUser }, key, config);
+    return token;
 }
 
 export async function logIn(req, res) {
@@ -42,10 +53,13 @@ export async function logIn(req, res) {
         }
 
         db = await connection({ column: 'sessions' });
-        const token = uuid();
+        const token = generateToken({ userId: user._id });
+
+        await db.deleteMany({ idUser: new ObjectId(user._id) });
+
         await db.insertOne({ token, idUser: user._id });
 
-        res.sendStatus(200);
+        res.send(token);
     } catch (error) {
         res.sendStatus(500);
     }

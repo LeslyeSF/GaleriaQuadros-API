@@ -1,13 +1,26 @@
-import logInSchema from '../validations/logInSchema.js';
+import jwt from 'jsonwebtoken';
 
-export function logInValidationMiddleware(req, res, next) {
-    const { email, password } = req.body;
+function auth(req, res, next) {
+    const token = req.headers.authorization?.replace('Bearer ', '');
 
-    const validation = logInSchema.validate({ email, password });
+    let userId = null;
 
-    if (validation.error) {
-        res.sendStatus(422);
-        return;
+    if (!token) {
+        return res.sendStatus(401);
     }
-    next();
+
+    const key = process.env.JWT_SECRET;
+    try {
+        const validateToken = jwt.verify(token, key);
+        userId = validateToken;
+    } catch (error) {
+        return res.sendStatus(401);
+    }
+
+    res.locals.user = userId.idUser;
+    return next();
 }
+
+export {
+    auth,
+};
