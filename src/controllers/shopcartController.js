@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { connection } from '../database.js';
 import * as productController from './productController.js';
 
@@ -32,17 +31,22 @@ async function getProductsInShoppingCart(req, res) {
     try {
         const db = await connection({ column: 'shopcarts' });
 
-        const productsIds = await db.find({ userId: new ObjectId(userId) }).toArray();
+        const productsIds = await db.find({ userId }).toArray();
 
         if (!productsIds) {
             return res.send([]);
         }
 
-        const productsInShoppingCart = productsIds.map(async (product) => {
-            const data = await productController.findProductById({ id: product.productId });
-            return data;
+        const productsInShoppingCart = [];
+        let item = null;
+
+        const promise = productsIds.map(async (product) => {
+            item = await productController.findProductById({ id: product.productId });
+            productsInShoppingCart.push(item);
         });
-        console.log(productsInShoppingCart);
+
+        await Promise.all(promise);
+
         return res.send(productsInShoppingCart);
     } catch (error) {
         return res.status(500).send({ message: 'O banco de dados está offline' });

@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import * as shopcartController from '../controllers/shopcartController.js';
-import { verifyTokenMiddleware } from '../middlewares/verifyTokenMiddleware.js';
+import { auth } from '../middlewares/auth.js';
 
 const router = new Router();
 
-router.post('/shopcart/:id', verifyTokenMiddleware, shopcartController.postNewProductToCart);
-router.get('/shopcart', verifyTokenMiddleware, shopcartController.getProductsInShoppingCart);
-router.delete('/shopcart/:id', shopcartController.removeProductsFromShoppingCart);
+router.post('/shopcart/:id', auth, shopcartController.postNewProductToCart);
+router.get('/shopcart', auth, shopcartController.getProductsInShoppingCart);
+router.delete('/shopcart/:id', auth, shopcartController.removeProductsFromShoppingCart);
 
 export default router;

@@ -1,7 +1,8 @@
 import { Router } from 'express';
+
 import { logIn, logOut, signUp } from '../controllers/authController.js';
-import { logInValidationMiddleware } from '../middlewares/auth.js';
-import { userValidationMiddleware } from '../middlewares/user.js';
+import { logInValidationMiddleware } from '../middlewares/authValidation.js';
+import { userValidationMiddleware } from '../middlewares/userValidation.js';
 
 const authRouter = Router();
 authRouter.post('/signup', userValidationMiddleware, signUp);
