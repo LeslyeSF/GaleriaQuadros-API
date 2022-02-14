@@ -59,8 +59,21 @@ export async function logIn(req, res) {
 
         await db.insertOne({ token, idUser: user._id });
 
-        res.send(token);
+        res.status(200).send({ token, user });
     } catch (error) {
         res.sendStatus(500);
+    }
+}
+
+export async function logOut(req, res) {
+    const { authorization } = req.headers;
+
+    const token = authorization?.replace('Bearer ', '');
+    try {
+        const db = await connection({ column: 'sessions' });
+        await db.deleteOne({ token });
+        res.send(200);
+    } catch (err) {
+        res.status(500).send(err);
     }
 }
