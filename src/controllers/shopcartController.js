@@ -39,9 +39,10 @@ async function getProductsInShoppingCart(req, res) {
         }
 
         const productsInShoppingCart = productsIds.map(async (product) => {
-            await productController.findProductById({ id: product.id });
+            const data = await productController.findProductById({ id: product.productId });
+            return data;
         });
-
+        console.log(productsInShoppingCart);
         return res.send(productsInShoppingCart);
     } catch (error) {
         return res.status(500).send({ message: 'O banco de dados está offline' });
